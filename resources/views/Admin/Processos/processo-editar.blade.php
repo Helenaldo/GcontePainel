@@ -2,6 +2,7 @@
 @section('title', 'Novo Processo')
 @section('content_header')
 <h3>Editar Processo</h3>
+
 @endsection
 @section('content')
 <form action="{{ route('processo.update', ['processo' => $processo->id]) }}" method="POST" class="form-horizontal">

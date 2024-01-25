@@ -84,6 +84,7 @@
                             <input class="form-control form-control-sm" id="usuario" type="text" placeholder="Usuário" style="font-weight: bold;">
                         </div>
                     </th>
+
                     <th>
                         <div class="input-group mb-2">
                             <div class="input-group-prepend">
