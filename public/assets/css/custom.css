@@ -1,0 +1,23 @@
+.custom-radio input {
+    display: none;
+}
+.custom-radio input + label:before {
+    content: '';
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid gray;
+    display: inline-block;
+    margin-right: 2px;
+    margin-left: 10px;
+    margin-bottom: -2px;
+}
+
+.custom-radio input:checked + label:before {
+    background-color: white;
+    box-sizing: border-box;
+    border: 5px solid blue;
+    padding: 4px;
+
+}
