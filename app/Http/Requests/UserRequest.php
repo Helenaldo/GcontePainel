@@ -22,8 +22,7 @@ class UserRequest extends FormRequest
             'email' => 'string|required|unique:users,email',
             'perfil' => 'string|required|in:Administrador,Operador',
             'ativo' => 'boolean|required',
-            'password' => 'string|required|confirmed',
-
+            'password' => 'string|required|confirmed|min:6|regex:/^(?=.*[a-zA-Z])(?=.*\d).+$/',
         ];
     }
 }

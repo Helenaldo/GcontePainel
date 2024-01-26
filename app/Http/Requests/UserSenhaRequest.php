@@ -14,7 +14,7 @@ class UserSenhaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'password' => 'string|required|confirmed',
+            'password' => 'string|required|confirmed|min:6|regex:/^(?=.*[a-zA-Z])(?=.*\d).+$/',
         ];
     }
 }
