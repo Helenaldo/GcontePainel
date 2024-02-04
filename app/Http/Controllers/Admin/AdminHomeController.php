@@ -91,7 +91,7 @@ class AdminHomeController extends Controller
         }
         /* FIM DOS DADOS PARA O GRÁFICO DE BARRAS PROCESSOS MOVIMENTADOS */
 
-        return view('admin.home',
+        return view('Admin.home',
             compact([
                 'qtdClientes',
                 'qtdProcessosAtivos',

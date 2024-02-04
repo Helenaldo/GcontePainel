@@ -52,6 +52,6 @@ Route::prefix('painel')->group(function() {
 
 Route::get('clientes/buscar-cidade', [ClienteController::class, 'buscarCidade'])->name('buscarCidade');
 
-Route::get('/teste', [TestController::class, 'index'])->name('teste');
+
 
 
