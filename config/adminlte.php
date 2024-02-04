@@ -293,7 +293,7 @@ return [
         // Navbar items:
         [
             'type'         => 'navbar-search',
-            'text'         => 'search',
+            // 'text'         => 'search',
             'topnav_right' => true,
         ],
         [

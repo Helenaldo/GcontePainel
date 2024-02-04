@@ -31,10 +31,19 @@
                     </label>
                 </div>
             </div>
-
         </form>
-
-
+    </div>
+    <div class="col-sm-3">
+        <form action="{{ route('clientes.index') }}" method="GET">
+        <div class="input-group input-group-sm" style="width: 300px;">
+            <input type="text" id="table_search" name="nome" class="form-control float-right" value="{{ $nome }}" placeholder="Pesquisar...">
+            <div class="input-group-append">
+            <button type="submit" class="btn btn-default">
+            <i class="fas fa-search"></i>
+            </button>
+            </div>
+            </div>
+        </form>
     </div>
 
 </div>
@@ -44,51 +53,16 @@
     <table class="table table-hover"  id="tabela">
         <thead>
             <tr>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="Nome" type="text" placeholder="Nome" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="fantasia" type="text" placeholder="Fantasia" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="cnpj-cpf" type="text" placeholder="CNPJ/CPF" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="cidade" type="text" placeholder="Cidade" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-paper-plane"></i></span>
-                        </div>
-                        <input class="form-control" type="text" placeholder="AÇÕES" style="font-weight: bold; background-color: transparent;" disabled>
-                    </div>
-                </th>
+                <th>Nome</th>
+                <th>Fantasia</th>
+                <th>CNPJ/CPF</th>
+                <th>Cidade</th>
+                <th>Ações</th>
             </tr>
         </thead>
         @if ($clientes->total())
         @foreach ($clientes as $cliente)
-        <tbody>
+        <tbody id="myTable">
 
             @php
                 $class = '';
@@ -99,7 +73,24 @@
             <tr class="{{ $class }}">
                 <td>{{ $cliente->nome }}</td>
                 <td>{{ $cliente->fantasia }}</td>
-                <td>{{ $cliente->cpf_cnpj }}</td>
+                <td>
+                    @php
+                    // Remove os caracteres ., / e - do cpf_cnpj
+                    $cpfCnpjLimpo = preg_replace('/[.\/-]/', '', $cliente->cpf_cnpj);
+
+                    // Verifica se o cpfCnpjLimpo tem 14 caracteres
+                    if (strlen($cpfCnpjLimpo) == 14) {
+                        // Monta o link com o CNPJ limpo
+                        $url = "https://servicos.receita.fazenda.gov.br/Servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj=" . $cpfCnpjLimpo;
+
+                        // Exibe o link
+                        echo "<a href='{$url}' target='_blank'>{$cliente->cpf_cnpj} <i class='fa fa-eye'></i></a>";
+                    } else {
+                        // Se não tiver 14 caracteres, apenas exibe o cpf_cnpj normalmente
+                        echo $cliente->cpf_cnpj;
+                    }
+                    @endphp
+                </td>
                 <td>{{ $cliente->cidade ? $cliente->cidade->municipio : 'Sem cidade associada' }}</td>
                 <td>
                     <a href="#" class="btn btn-sm btn-warning">Ver</a>
@@ -136,7 +127,19 @@
 @endsection
 
 @section('js')
-    <script src="/assets/js/filtrar.js" type="text/javascript"></script>
+
+{{-- <script>
+        $(document).ready(function(){
+      $("#table_search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+</script> --}}
+
+    {{-- <script src="/assets/js/filtrar.js" type="text/javascript"></script> --}}
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     @foreach(['success', 'error', 'info', 'warning'] as $type)
     @if(session($type))

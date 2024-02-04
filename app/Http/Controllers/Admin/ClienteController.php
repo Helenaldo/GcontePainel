@@ -20,16 +20,51 @@ class ClienteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Clientes ativos: 'data_saida' é null
-        $clientes = Cliente::whereNull('data_saida')
-            ->orderBy('nome', 'asc')
-            ->paginate(15);
+        // Inicializa a consulta para buscar clientes. Filtra os clientes ativos onde 'data_saida' é null.
+        $clientes = Cliente::when($request->has('nome'), function ($query) use ($request) {
+            // Se um nome foi especificado na solicitação, filtra os clientes pelo 'nome', 'fantasia', ou 'cidade' usando uma busca 'like'.
+            $query->where(function ($query) use ($request) {
+                $query->where('nome', 'like', '%' . $request->nome . '%')
+                      ->orWhere('fantasia', 'like', '%' . $request->nome . '%');
 
+            });
+        })
+        ->whereNull('data_saida') // Continua a filtrar somente os clientes ativos (aqueles sem uma 'data_saida' definida).
+        ->orderBy('nome', 'asc') // Ordena os clientes pelo nome em ordem ascendente.
+        ->paginate(15) // Pagina os resultados, retornando 15 clientes por página.
+        ->withQueryString(); // Mantém a string de consulta original ao paginar.
+
+        // Define um filtro como 'ativos' para ser usado na visualização para indicar que a lista é de clientes ativos.
         $filtro = 'ativos';
-        return view('Admin.Clientes.cliente-listar', compact([ 'clientes', 'filtro' ]));
+
+        // Retorna a visualização 'cliente-listar' com os clientes filtrados, o tipo de filtro aplicado e o nome procurado, se houver.
+        return view('Admin.Clientes.cliente-listar',[
+            'clientes' => $clientes, // Passa os clientes paginados para a visualização.
+            'filtro' => $filtro, // Informa à visualização que o filtro atual é 'ativos'.
+            'nome' => $request->nome // Passa o nome procurado para manter o filtro aplicado na visualização.
+        ]);
     }
+
+    //  public function index(Request $request)
+    // {
+    //     // Clientes ativos: 'data_saida' é null
+    //     $clientes = Cliente::when($request->has('nome'), function ($whenQuery) use ($request) {
+    //         $whenQuery->where('nome', 'like', '%' . $request->nome . '%');
+    //         })
+    //         ->whereNull('data_saida')
+    //         ->orderBy('nome', 'asc')
+    //         ->paginate(15)
+    //         ->withQueryString();
+
+    //     $filtro = 'ativos';
+    //     return view('Admin.Clientes.cliente-listar',[
+    //         'clientes' => $clientes,
+    //         'filtro' => $filtro,
+    //         'nome' =>  $request->nome
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -165,6 +200,7 @@ class ClienteController extends Controller
 
         return view('Admin.Clientes.cliente-listar', compact('clientes', 'filtro'));
     }
+
 
 
     // public function buscarCidade() {

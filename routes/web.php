@@ -13,10 +13,8 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Site\HomeController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\TestController;
 
-
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('site');
 
 Route::prefix('painel')->group(function() {
     Route::get('/', [AdminHomeController::class, 'index'])->name('admin');
@@ -51,6 +49,8 @@ Route::prefix('painel')->group(function() {
 
 
 Route::get('clientes/buscar-cidade', [ClienteController::class, 'buscarCidade'])->name('buscarCidade');
+// Route::get('/clientes/search', [ClienteController::class, 'search'])->name('clientes.search');
+
 
 
 
