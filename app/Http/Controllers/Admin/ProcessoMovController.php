@@ -71,7 +71,6 @@ class ProcessoMovController extends Controller
                 ->with('error', 'Processo Concluído não pode ser movimentado');
         }
 
-
         $movimento = $request->only([
             'user_id',
             'processo_id',
@@ -128,8 +127,7 @@ class ProcessoMovController extends Controller
             'user_id',
             'processo_id',
             'data',
-            'descricao',
-
+            'descricao'
         ]);
 
         if ($request->hasFile('anexo')) {
@@ -174,8 +172,6 @@ class ProcessoMovController extends Controller
             $processo_mov->delete();
             return redirect()->route('processoMov.index', ['id' => $processo_mov->processo_id])->with('warning', 'Movimento deletado com sucesso!');
         }
-
         return redirect()->route('processoMov.index', ['id' => $processo_mov->processo_id])->with('error', 'Nenhum movimento deletado!');
     }
-
 }
