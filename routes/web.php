@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\ClienteController;
 use App\Http\Controllers\Admin\ContatosController;
 use App\Http\Controllers\Admin\ProcessoController;
-use App\Http\Controllers\admin\ProcessoMovController;
+use App\Http\Controllers\admin\ProcessomovController;
 use App\Http\Controllers\Admin\ResponsabilidadesController;
 use App\Http\Controllers\Admin\TributacaoController;
 use App\Http\Controllers\Admin\UserController;
@@ -34,7 +34,7 @@ Route::prefix('painel')->group(function() {
 
     Route::resource('processo', ProcessoController::class);
     Route::post('processo/filtrar', [ProcessoController::class, 'processosFiltrar'])->name('processosFiltrar');
-    Route::resource('processoMov', ProcessoMovController::class);
+    Route::resource('processoMov', ProcessomovController::class);
 
     Route::resource('usuarios', UserController::class);
     Route::resource('responsabilidades', ResponsabilidadesController::class);
