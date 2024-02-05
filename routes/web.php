@@ -6,7 +6,7 @@ use App\Http\Controllers\Admin\Auth\RegisterController;
 use App\Http\Controllers\Admin\ClienteController;
 use App\Http\Controllers\Admin\ContatosController;
 use App\Http\Controllers\Admin\ProcessoController;
-use App\Http\Controllers\admin\ProcessomovController;
+use App\Http\Controllers\Admin\ProcessomovController;
 use App\Http\Controllers\Admin\ResponsabilidadesController;
 use App\Http\Controllers\Admin\TributacaoController;
 use App\Http\Controllers\Admin\UserController;
