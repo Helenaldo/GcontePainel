@@ -23,11 +23,11 @@ class ClienteController extends Controller
     public function index(Request $request)
     {
         // Inicializa a consulta para buscar clientes. Filtra os clientes ativos onde 'data_saida' é null.
-        $clientes = Cliente::when($request->has('nome'), function ($query) use ($request) {
-            // Se um nome foi especificado na solicitação, filtra os clientes pelo 'nome', 'fantasia', ou 'cidade' usando uma busca 'like'.
+        $clientes = Cliente::when($request->has('pesquisa'), function ($query) use ($request) {
+            // Se um nome foi especificado na solicitação, filtra os clientes pelo 'nome' ou 'fantasia' usando uma busca 'like'.
             $query->where(function ($query) use ($request) {
-                $query->where('nome', 'like', '%' . $request->nome . '%')
-                      ->orWhere('fantasia', 'like', '%' . $request->nome . '%');
+                $query->where('nome', 'like', '%' . $request->pesquisa . '%')
+                      ->orWhere('fantasia', 'like', '%' . $request->pesquisa . '%');
 
             });
         })
@@ -43,7 +43,7 @@ class ClienteController extends Controller
         return view('Admin.Clientes.cliente-listar',[
             'clientes' => $clientes, // Passa os clientes paginados para a visualização.
             'filtro' => $filtro, // Informa à visualização que o filtro atual é 'ativos'.
-            'nome' => $request->nome // Passa o nome procurado para manter o filtro aplicado na visualização.
+            'pesquisa' => $request->pesquisa // Passa o nome procurado para manter o filtro aplicado na visualização.
         ]);
     }
 

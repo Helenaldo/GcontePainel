@@ -3,10 +3,27 @@
 @section('title', 'Contatos de Clientes')
 
 @section('content_header')
-    <h3>
-        Contatos
-        <a href="{{route('contatos.create')}}" class="btn btn-sm btn-success">Novo Contato</a>
-    </h3>
+<div class="row">
+    <div class="col-sm-3">
+        <h3>
+            Contatos
+            <a href="{{route('contatos.create')}}" class="btn btn-sm btn-success">Novo Contato</a>
+        </h3>
+    </div>
+    <div class="col-sm-9">
+        <form action="{{ route('contatos.index') }}" method="GET">
+            <div class="input-group input-group-sm" style="width: 300px;">
+                <input type="text" id="table_search" name="pesquisa" class="form-control float-right" value="{{ $pesquisa }}" placeholder="Pesquisar...">
+                <div class="input-group-append">
+                <button type="submit" class="btn btn-default">
+                <i class="fas fa-search"></i>
+                </button>
+                </div>
+                </div>
+            </form>
+    </div>
+</div>
+
 @endsection
 
 @section('content')
@@ -15,46 +32,11 @@
         <table class="table table-hover" id="tabela">
             <thead>
             <tr>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="cliente" type="text" placeholder="Cliente" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="contato" type="text" placeholder="Contato" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="email" type="text" placeholder="E-mail" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="telefone" type="text" placeholder="Telefone" style="font-weight: bold;">
-                    </div>
-                </th>
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-paper-plane"></i></span>
-                        </div>
-                        <input class="form-control" type="text" placeholder="AÇÕES" style="font-weight: bold; background-color: transparent;" disabled>
-                    </div>
-                </th>
+                <th>Cliente</th>
+                <th>Contato</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Ações</th>
             </tr>
         </thead>
             @if ($contatos->total())
@@ -98,7 +80,6 @@
 @endsection
 
 @section('js')
-    <script src="/assets/js/filtrar.js" type="text/javascript"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
     @foreach(['success', 'error', 'info', 'warning'] as $type)

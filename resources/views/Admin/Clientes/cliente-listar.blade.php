@@ -36,7 +36,7 @@
     <div class="col-sm-3">
         <form action="{{ route('clientes.index') }}" method="GET">
         <div class="input-group input-group-sm" style="width: 300px;">
-            <input type="text" id="table_search" name="nome" class="form-control float-right" value="{{ $nome }}" placeholder="Pesquisar...">
+            <input type="text" id="table_search" name="pesquisa" class="form-control float-right" value="{{ $pesquisa }}" placeholder="Pesquisar...">
             <div class="input-group-append">
             <button type="submit" class="btn btn-default">
             <i class="fas fa-search"></i>

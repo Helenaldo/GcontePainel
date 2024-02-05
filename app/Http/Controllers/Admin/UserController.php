@@ -40,7 +40,7 @@ class UserController extends Controller
      */
     public function store(UserRequest $request)
     {
-    //    dd($request);
+
         $user = $request->only([
             'name',
             'email',
@@ -49,6 +49,11 @@ class UserController extends Controller
             'password',
             'password_confirmation',
         ]);
+
+        $loggedUser = auth()->user();
+        if ($loggedUser->perfil != 'Administrador') {
+            return redirect()->route('usuarios.index')->with('error', 'Ação não permitida');
+        }
 
         $user['name'] = strtoupper($user['name']);
         $user['email'] = strtolower($user['email']);

@@ -17,12 +17,33 @@ class ContatosController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $contatos = Contato::orderBy('nome', 'asc')->paginate(15);
+        $contatos = Contato::when($request->has('pesquisa'), function ($query) use ($request) {
+            $query->where(function ($query) use ($request) {
+                $query->where('nome', 'like', '%' . $request->pesquisa . '%')
+                      ->orwhere('email', 'like', '%' . $request->pesquisa . '%');
+            });
+        })
+        ->orderBy('nome', 'asc')
+        ->paginate(15)
+        ->withQueryString();
 
-        return view('Admin.Clientes.contato-listar', compact(['contatos']));
+        return view('Admin.Clientes.contato-listar', [
+            'contatos' => $contatos,
+            'pesquisa' => $request->pesquisa
+        ]);
     }
+
+
+    // public function index(Request $request)
+    // {
+    //     $contatos = Contato::orderBy('nome', 'asc')->paginate(15);
+
+    //     return view('Admin.Clientes.contato-listar', compact(['contatos']));
+    // }
+
+
 
     /**
      * Show the form for creating a new resource.

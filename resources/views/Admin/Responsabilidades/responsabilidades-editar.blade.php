@@ -21,7 +21,7 @@
 
                 <div class="col-md-8">
                     <label class="col-form-label" for="cliente_id">Cliente:*</label>
-                    <select name="cliente_id" id="cliente_id" class="form-control" required>
+                    <select name="cliente_id" id="cliente_id" class="form-control select2" required>
                         <option value="">Selecione</option>
                         @foreach ($clientes as $cliente)
                         <option value="{{ $cliente->id }}" {{ $responsabilidade->cliente_id == $cliente->id ? 'selected' : '' }}>
@@ -114,4 +114,10 @@
 @section('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/assets/js/concluido.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
 @endsection

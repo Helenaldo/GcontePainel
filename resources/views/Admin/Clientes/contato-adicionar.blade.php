@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <label class="col-form-label" for="cliente_id">Cliente:*</label>
-                    <select name="cliente_id" id="cliente_id" class="form-control" required>
+                    <select name="cliente_id" id="cliente_id" class="form-control select2" required>
                         <option value="">Selecione</option>
                         @foreach ($clientes as $cliente)
                             <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
@@ -65,4 +65,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/assets/js/jquery.mask.min.js" type="text/javascript"></script>
     <script src="/assets/js/mascaras.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
 @endsection
