@@ -307,6 +307,11 @@ return [
 
         //['header' => 'account_settings'],
             [
+                'text' => 'Dashboard',
+                'url'  => 'painel/',
+                'icon' => 'fas fa-fw fa-chart-pie',
+            ],
+            [
                 'text' => 'Clientes',
                 'icon' => 'fas fa-fw fa-building',
                 'submenu' => [

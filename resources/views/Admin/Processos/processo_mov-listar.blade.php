@@ -42,7 +42,7 @@
             </div>
             <div class="col-md-3">
                 <label class="col-form-label col-form-label-sm" for="usuario">Responsável:</label>
-                <input type="date" id="concluido" name="concluido" class="form-control form-control-sm" value="{{ $processo->user->name }}" readonly>
+                <input type="text" id="concluido" name="concluido" class="form-control form-control-sm" value="{{ $processo->user->name }}" readonly>
             </div>
         </div>
     </div>
