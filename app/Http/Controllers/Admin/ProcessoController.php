@@ -37,8 +37,7 @@ class ProcessoController extends Controller
         })
         ->whereNull('concluido')
         ->orderBy('data', 'desc')
-        ->paginate(15)
-        ->withQueryString();
+        ->get();
 
         $filtro = 'ativos';
         return view('Admin.Processos.processo-listar', [
