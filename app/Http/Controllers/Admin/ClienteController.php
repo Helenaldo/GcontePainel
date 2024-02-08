@@ -47,25 +47,6 @@ class ClienteController extends Controller
         ]);
     }
 
-    //  public function index(Request $request)
-    // {
-    //     // Clientes ativos: 'data_saida' é null
-    //     $clientes = Cliente::when($request->has('nome'), function ($whenQuery) use ($request) {
-    //         $whenQuery->where('nome', 'like', '%' . $request->nome . '%');
-    //         })
-    //         ->whereNull('data_saida')
-    //         ->orderBy('nome', 'asc')
-    //         ->paginate(15)
-    //         ->withQueryString();
-
-    //     $filtro = 'ativos';
-    //     return view('Admin.Clientes.cliente-listar',[
-    //         'clientes' => $clientes,
-    //         'filtro' => $filtro,
-    //         'nome' =>  $request->nome
-    //     ]);
-    // }
-
     /**
      * Show the form for creating a new resource.
      */

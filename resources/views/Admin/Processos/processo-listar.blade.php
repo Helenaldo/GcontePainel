@@ -15,6 +15,7 @@
 
     <div class="col-sm-3">
         <form method="POST" action="{{ route('processosFiltrar') }}">
+
             @csrf
             <div class="form-group">
                 <div class="d-inline custom-radio">
@@ -30,6 +31,12 @@
                     </label>
                 </div>
                 <div class="d-inline custom-radio">
+                    <input type="radio" id="parados" value="parados" name="r1" {{ $filtro == 'parados' ? 'checked' : '' }} onclick="this.form.submit()">
+                    <label for="parados">
+                        Parados
+                    </label>
+                </div>
+                <div class="d-inline custom-radio">
                     <input type="radio" id="todos" value="todos" name="r1" {{ $filtro == 'todos' ? 'checked' : '' }} onclick="this.form.submit()">
                     <label for="todos">
                     Todos
@@ -40,6 +47,18 @@
         </form>
 
 
+    </div>
+    <div class="col-sm-3">
+        <form action="{{ route('processo.index') }}" method="GET">
+            <div class="input-group input-group-sm" style="width: 300px;">
+                <input type="text" id="table_search" name="pesquisa" class="form-control float-right" value="{{ $pesquisa }}" placeholder="Pesquisar por cliente, título ou status...">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-default">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 
 
@@ -53,66 +72,31 @@
             <thead>
             <tr>
                 <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="cliente" type="text" placeholder="Cliente" style="font-weight: bold;">
-                    </div>
+                    Data
                 </th>
                 <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="titulo" type="text" placeholder="Título" style="font-weight: bold;">
-                    </div>
+                    Clientes
                 </th>
                 <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="numero" type="text" placeholder="Número" style="font-weight: bold;">
-                    </div>
+                    Título
                 </th>
                 <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="status" type="text" placeholder="Status" style="font-weight: bold;">
-                    </div>
-                </th>
-                {{-- <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="data" type="text" placeholder="Data" style="font-weight: bold;">
-                    </div>
-                </th> --}}
-                <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        </div>
-                        <input class="form-control" id="usuario" type="text" placeholder="Usuário" style="font-weight: bold;">
-                    </div>
+                   Nº. Protocolo
                 </th>
                 <th>
-                    <div class="input-group mb-2">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-paper-plane"></i></span>
-                        </div>
-                        <input class="form-control" type="text" placeholder="AÇÕES" style="font-weight: bold; background-color: transparent;" disabled>
-                    </div>
+                    Status
+                </th>
+                <th>
+                    Criado por:
+                </th>
+                <th>
+                    Ações
                 </th>
             </tr>
         </thead>
 
 
-            @if ($processos->total())
+            {{-- @if ($processos->total()) --}}
 
             @foreach ($processos as $processo)
             <tbody>
@@ -126,6 +110,7 @@
                 @endphp
 
                 <tr class="{{ $class }}">
+                    <td>{{ $processo->data ? \Carbon\Carbon::parse($processo->data)->format('d/m/Y') : '' }}</td>
                     <td>{{$processo->cliente->nome}}</td>
                     <td>{{$processo->titulo}}</td>
                     <td>
@@ -138,7 +123,7 @@
                         @endif
                     </td>
                     <td>{{$processo->status}}</td>
-                    {{-- <td>{{ $processo->data ? \Carbon\Carbon::parse($processo->data)->format('d/m/Y') : '' }}</td> --}}
+
                     <td>{{ explode(' ', $processo->user->name)[0] }}</td>
                     <td>
                         <a href="{{ route('processoMov.index', ['processo' => $processo->id]) }}" class="btn btn-sm btn-warning">Ver</a>
@@ -171,18 +156,18 @@
                     </td>
                 </tr>
             @endforeach
-            @else
+            {{-- @else
                 <tr>
                     <td colspan="9">
                         Não existem processos cadastrados!
                     </td>
                 </tr>
 
-            @endif
+            @endif --}}
         </tbody>
         </table>
 
-        {{ $processos->links('pagination::bootstrap-4') }}
+        {{-- {{ $processos->links('pagination::bootstrap-4') }} --}}
     </div>
 
 @endsection

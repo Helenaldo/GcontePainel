@@ -29,5 +29,11 @@ class Processo extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    //Define a relação com ProcessosMov.
+    public function movimentacoes()
+    {
+        return $this->hasMany(ProcessoMov::class, 'processo_id');
+    }
 }
 
