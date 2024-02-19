@@ -21,31 +21,69 @@ class ClienteController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        // Inicializa a consulta para buscar clientes. Filtra os clientes ativos onde 'data_saida' é null.
-        $clientes = Cliente::when($request->has('pesquisa'), function ($query) use ($request) {
-            // Se um nome foi especificado na solicitação, filtra os clientes pelo 'nome' ou 'fantasia' usando uma busca 'like'.
-            $query->where(function ($query) use ($request) {
-                $query->where('nome', 'like', '%' . $request->pesquisa . '%')
-                      ->orWhere('fantasia', 'like', '%' . $request->pesquisa . '%');
+{
+    // Inicializa a consulta base de clientes.
+    $clientes = Cliente::query();
 
-            });
-        })
-        ->whereNull('data_saida') // Continua a filtrar somente os clientes ativos (aqueles sem uma 'data_saida' definida).
-        ->orderBy('nome', 'asc') // Ordena os clientes pelo nome em ordem ascendente.
-        ->paginate(15) // Pagina os resultados, retornando 15 clientes por página.
-        ->withQueryString(); // Mantém a string de consulta original ao paginar.
-
-        // Define um filtro como 'ativos' para ser usado na visualização para indicar que a lista é de clientes ativos.
-        $filtro = 'ativos';
-
-        // Retorna a visualização 'cliente-listar' com os clientes filtrados, o tipo de filtro aplicado e o nome procurado, se houver.
-        return view('Admin.Clientes.cliente-listar',[
-            'clientes' => $clientes, // Passa os clientes paginados para a visualização.
-            'filtro' => $filtro, // Informa à visualização que o filtro atual é 'ativos'.
-            'pesquisa' => $request->pesquisa // Passa o nome procurado para manter o filtro aplicado na visualização.
-        ]);
+    // Aplica o filtro de status (ativos, inativos, todos).
+    switch ($request->input('r1', 'ativos')) {
+        case 'ativos':
+            $clientes->whereNull('data_saida');
+            break;
+        case 'inativos':
+            $clientes->whereNotNull('data_saida');
+            break;
+        // Caso 'todos', não aplica nenhum filtro adicional.
     }
+
+    // Aplica a pesquisa por nome ou fantasia, se especificado.
+    if (!empty($request->pesquisa)) {
+        $clientes->where(function ($query) use ($request) {
+            $query->where('nome', 'like', '%' . $request->pesquisa . '%')
+                  ->orWhere('fantasia', 'like', '%' . $request->pesquisa . '%');
+        });
+    }
+
+    // Ordena e pagina os resultados.
+    $clientes = $clientes->orderBy('nome', 'asc')->paginate(15)->withQueryString();
+
+    // Captura o filtro aplicado e o termo de pesquisa para passar à view.
+    $filtro = $request->input('r1', 'ativos');
+    $pesquisa = $request->pesquisa;
+
+    // Retorna a visualização com os clientes filtrados e informações adicionais.
+    return view('Admin.Clientes.cliente-listar', compact('clientes', 'filtro', 'pesquisa'));
+}
+
+
+
+
+    // public function index(Request $request)
+    // {
+    //     // Inicializa a consulta para buscar clientes. Filtra os clientes ativos onde 'data_saida' é null.
+    //     $clientes = Cliente::when($request->has('pesquisa'), function ($query) use ($request) {
+    //         // Se um nome foi especificado na solicitação, filtra os clientes pelo 'nome' ou 'fantasia' usando uma busca 'like'.
+    //         $query->where(function ($query) use ($request) {
+    //             $query->where('nome', 'like', '%' . $request->pesquisa . '%')
+    //                   ->orWhere('fantasia', 'like', '%' . $request->pesquisa . '%');
+
+    //         });
+    //     })
+    //     ->whereNull('data_saida') // Continua a filtrar somente os clientes ativos (aqueles sem uma 'data_saida' definida).
+    //     ->orderBy('nome', 'asc') // Ordena os clientes pelo nome em ordem ascendente.
+    //     ->paginate(15) // Pagina os resultados, retornando 15 clientes por página.
+    //     ->withQueryString(); // Mantém a string de consulta original ao paginar.
+
+    //     // Define um filtro como 'ativos' para ser usado na visualização para indicar que a lista é de clientes ativos.
+    //     $filtro = 'ativos';
+
+    //     // Retorna a visualização 'cliente-listar' com os clientes filtrados, o tipo de filtro aplicado e o nome procurado, se houver.
+    //     return view('Admin.Clientes.cliente-listar',[
+    //         'clientes' => $clientes, // Passa os clientes paginados para a visualização.
+    //         'filtro' => $filtro, // Informa à visualização que o filtro atual é 'ativos'.
+    //         'pesquisa' => $request->pesquisa // Passa o nome procurado para manter o filtro aplicado na visualização.
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -163,24 +201,25 @@ class ClienteController extends Controller
         return redirect()->route('clientes.index')->with('error', 'Cliente não deletado');
     }
 
-    public function clientesFiltrar(Request $request)
-    {
+    // public function clientesFiltrar(Request $request)
+    // {
 
-        $filtro = $request->r1;
+    //     $filtro = $request->r1;
+    //     $pesquisa = '';
 
-        if ($filtro == 'ativos') {
-            // Clientes ativos: 'data_saida' é null
-            $clientes = Cliente::whereNull('data_saida')->paginate(15);
-        } elseif ($filtro == 'inativos') {
-            // Clientes inativos: 'data_saida' não é null
-            $clientes = Cliente::whereNotNull('data_saida')->paginate(15);
-        } else {
-            // Todos os clientes
-            $clientes = Cliente::paginate(15);
-        }
+    //     if ($filtro == 'ativos') {
+    //         // Clientes ativos: 'data_saida' é null
+    //         $clientes = Cliente::whereNull('data_saida')->paginate(15);
+    //     } elseif ($filtro == 'inativos') {
+    //         // Clientes inativos: 'data_saida' não é null
+    //         $clientes = Cliente::whereNotNull('data_saida')->paginate(15);
+    //     } else {
+    //         // Todos os clientes
+    //         $clientes = Cliente::paginate(15);
+    //     }
 
-        return view('Admin.Clientes.cliente-listar', compact('clientes', 'filtro'));
-    }
+    //     return view('Admin.Clientes.cliente-listar', compact('clientes', 'filtro', 'pesquisa'));
+    // }
 
 
 

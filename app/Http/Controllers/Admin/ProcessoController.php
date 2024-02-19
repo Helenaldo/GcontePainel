@@ -20,32 +20,95 @@ class ProcessoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-        // Chama o método para atualizar o status dos processos
-        $this->updateConcluido();
 
-        $processos = Processo::when($request->has('pesquisa'), function ($query) use ($request) {
-            $query->where(function ($query) use ($request) {
-                $query->where('titulo', 'like', '%' . $request->pesquisa . '%')
-                      ->orWhere('status', 'like', '%' . $request->pesquisa . '%')
-                      // Adicionando o filtro pelo nome do cliente
-                      ->orWhereHas('cliente', function ($q) use ($request) {
-                      $q->where('nome', 'like', '%' . $request->pesquisa . '%');
-                    });
-            });
-        })
-        ->whereNull('concluido')
-        ->orderBy('data', 'desc')
-        ->get();
+     public function index(Request $request)
+     {
+        // dd($request);
+         $this->updateConcluido(); // Atualiza o status dos processos como antes
 
-        $filtro = 'ativos';
-        return view('Admin.Processos.processo-listar', [
-            'processos' => $processos,
-            'filtro' => $filtro,
-            'pesquisa' => $request->pesquisa
-        ]);
-    }
+         $filtro = $request->input('r1', 'ativos'); // Assume 'ativos' como padrão se nenhum filtro for fornecido
+         $pesquisa = $request->input('pesquisa', '');
+
+         $query = Processo::query();
+
+         // Filtragem por pesquisa textual
+         if (!empty($pesquisa)) {
+             $query->where(function ($query) use ($pesquisa) {
+                 $query->where('titulo', 'like', '%' . $pesquisa . '%')
+                     ->orWhere('status', 'like', '%' . $pesquisa . '%')
+                     ->orWhereHas('cliente', function ($q) use ($pesquisa) {
+                         $q->where('nome', 'like', '%' . $pesquisa . '%');
+                     });
+             });
+         }
+
+         // Filtragem por status
+         switch ($filtro) {
+             case 'ativos':
+                 $query->whereNull('concluido');
+                 break;
+             case 'inativos':
+                 $query->whereNotNull('concluido');
+                 break;
+             case 'parados':
+                 $dezDiasAtras = Carbon::now()->subDays(11);
+                 $query->whereDoesntHave('movimentacoes', function ($query) use ($dezDiasAtras) {
+                     $query->where('data', '>', $dezDiasAtras);
+                 })->where('status', '!=', 'Concluido');
+                 break;
+             default:
+                 // Não aplica nenhum filtro adicional, listando todos os processos
+                 break;
+         }
+
+         $processos = $query->get()->map(function ($processo) {
+             // Cálculo dos dias passados para cada processo, como no método index
+             $dataProcesso = new Carbon($processo->data);
+             $hoje = Carbon::now();
+             $processo->diasPassados = $dataProcesso->diffInDays($hoje);
+             return $processo;
+         });
+
+         return view('Admin.Processos.processo-listar', compact('processos', 'filtro', 'pesquisa'));
+     }
+
+
+    // public function index(Request $request)
+    // {
+    //     // Chama o método para atualizar o status dos processos
+    //     $this->updateConcluido();
+
+    //     $processos = Processo::when($request->has('pesquisa'), function ($query) use ($request) {
+    //         $query->where(function ($query) use ($request) {
+    //             $query->where('titulo', 'like', '%' . $request->pesquisa . '%')
+    //                 ->orWhere('status', 'like', '%' . $request->pesquisa . '%')
+    //                 ->orWhereHas('cliente', function ($q) use ($request) {
+    //                     $q->where('nome', 'like', '%' . $request->pesquisa . '%');
+    //                 });
+    //         });
+    //     })
+    //     ->whereNull('concluido')
+    //     ->orderBy('data', 'desc')
+    //     ->get()
+    //     ->map(function ($processo) {
+    //         // Aqui você calcula a diferença em dias entre a data do processo e hoje
+    //         $dataProcesso = new Carbon($processo->data);
+    //         $hoje = Carbon::now();
+    //         $diasPassados = $dataProcesso->diffInDays($hoje);
+
+    //         // Adiciona o número de dias passados como um novo atributo do processo
+    //         $processo->diasPassados = $diasPassados;
+
+    //         return $processo;
+    //     });
+
+    //     $filtro = 'ativos';
+    //     return view('Admin.Processos.processo-listar', [
+    //         'processos' => $processos,
+    //         'filtro' => $filtro,
+    //         'pesquisa' => $request->pesquisa
+    //     ]);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -78,6 +141,12 @@ class ProcessoController extends Controller
         if(!$processo['data']) {
             $processo['data'] = date('Y-m-d');
         }
+
+        // Definir a prazo d+30 se não estiver presente no pedido
+        if(!$processo['prazo']) {
+            $processo['prazo'] = now()->addDays(30)->format('Y-m-d');
+        }
+
         // Definir 'Em andamento' como valor padrão para 'status' se estiver vazio
         if(!$processo['status']) {
             $processo['status'] = 'Em andamento';
@@ -205,37 +274,37 @@ class ProcessoController extends Controller
         return redirect()->route('processo.index');
     }
 
-    public function processosFiltrar(Request $request)
-    {
+    // public function processosFiltrar(Request $request)
+    // {
 
-        // Data de 10 dias atrás
-        $dezDiasAtras = Carbon::now()->subDays(11);
+    //     // Data de 10 dias atrás
+    //     $dezDiasAtras = Carbon::now()->subDays(11);
 
-        $processosParados = Processo::whereDoesntHave('movimentacoes', function ($query) use ($dezDiasAtras) {
-            $query->where('data', '>', $dezDiasAtras);
-            })
-            ->where('status', '!=', 'Concluido') // Exclui processos com status 'Concluido'
-            ->get();
+    //     $processosParados = Processo::whereDoesntHave('movimentacoes', function ($query) use ($dezDiasAtras) {
+    //         $query->where('data', '>', $dezDiasAtras);
+    //         })
+    //         ->where('status', '!=', 'Concluido') // Exclui processos com status 'Concluido'
+    //         ->get();
 
-        $filtro = $request->r1;
+    //     $filtro = $request->r1;
 
-        if ($filtro == 'ativos') {
-            // Processos ativos: 'data_saida' é null
-            $processos = Processo::whereNull('concluido')->get();
-        } elseif ($filtro == 'inativos') {
-            // Processos inativos: 'data_saida' não é null
-            $processos = Processo::whereNotNull('concluido')->get();
-        } elseif ($filtro == 'parados') {
-            // Processos parados
-            $processos = $processosParados;
-        } else {
-            // Todos os processos
-            $processos = Processo::all();
-        }
+    //     if ($filtro == 'ativos') {
+    //         // Processos ativos: 'data_saida' é null
+    //         $processos = Processo::whereNull('concluido')->get();
+    //     } elseif ($filtro == 'inativos') {
+    //         // Processos inativos: 'data_saida' não é null
+    //         $processos = Processo::whereNotNull('concluido')->get();
+    //     } elseif ($filtro == 'parados') {
+    //         // Processos parados
+    //         $processos = $processosParados;
+    //     } else {
+    //         // Todos os processos
+    //         $processos = Processo::all();
+    //     }
 
-        $pesquisa = "";
+    //     $pesquisa = "";
 
-        return view('Admin.Processos.processo-listar', compact(['processos', 'filtro', 'pesquisa']));
-    }
+    //     return view('Admin.Processos.processo-listar', compact(['processos', 'filtro', 'pesquisa']));
+    // }
 
 }

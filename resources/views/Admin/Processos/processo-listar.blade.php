@@ -14,7 +14,7 @@
     </div>
 
     <div class="col-sm-3">
-        <form method="POST" action="{{ route('processosFiltrar') }}">
+        <form method="GET" action="{{ route('processo.index') }}">
 
             @csrf
             <div class="form-group">
@@ -75,6 +75,9 @@
                     Data
                 </th>
                 <th>
+                    Dias
+                </th>
+                <th>
                     Clientes
                 </th>
                 <th>
@@ -111,6 +114,7 @@
 
                 <tr class="{{ $class }}">
                     <td>{{ $processo->data ? \Carbon\Carbon::parse($processo->data)->format('d/m/Y') : '' }}</td>
+                    <td>{{ $processo->diasPassados }}</td>
                     <td>{{$processo->cliente->nome}}</td>
                     <td>{{$processo->titulo}}</td>
                     <td>

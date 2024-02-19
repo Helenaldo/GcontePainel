@@ -13,7 +13,11 @@
                 <label class="col-form-label col-form-label-sm" for="cliente">Cliente:</label>
                 <input type="text" name="cliente" id="cliente" class="form-control form-control-sm" value="{{ $processo->cliente->nome }}" readonly>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="col-form-label  col-form-label-sm" for="titulo">CNPJ/CPF: </label>
+                <input type="text" name="cpf/cnpj" id="titulo" class="form-control form-control-sm" value="{{ $processo->cliente->cpf_cnpj }}" readonly>
+            </div>
+            <div class="col-md-2">
                 <label class="col-form-label  col-form-label-sm" for="titulo">Título: </label>
                 <input type="text" name="titulo" id="titulo" class="form-control form-control-sm" value="{{ $processo->titulo }}" readonly>
             </div>
@@ -28,7 +32,7 @@
 @endif
 
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="col-form-label col-form-label-sm" for="status">Status:</label>
                 <input type="text" name="numero" id="numero" class="form-control form-control-sm" value="{{ $processo->status }}" readonly>
             </div>

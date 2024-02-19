@@ -9,7 +9,7 @@
         </h3>
     </div>
     <div class="col-sm-3">
-        <form method="POST" action="{{ route('clientesFiltrar') }}">
+        <form method="GET" action="{{ route('clientes.index') }}">
             @csrf
             <div class="form-group">
                 <div class="d-inline custom-radio">
@@ -128,18 +128,6 @@
 
 @section('js')
 
-{{-- <script>
-        $(document).ready(function(){
-      $("#table_search").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#myTable tr").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-        });
-      });
-    });
-</script> --}}
-
-    {{-- <script src="/assets/js/filtrar.js" type="text/javascript"></script> --}}
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     @foreach(['success', 'error', 'info', 'warning'] as $type)
     @if(session($type))
