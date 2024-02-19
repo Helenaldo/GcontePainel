@@ -27,13 +27,11 @@ Route::prefix('painel')->group(function() {
     Route::post('register', [RegisterController::class, 'register']);
 
     Route::resource('clientes', ClienteController::class);
-    Route::post('clientes/filtrar', [ClienteController::class, 'clientesFiltrar'])->name('clientesFiltrar');
 
     Route::resource('contatos', ContatosController::class);
     Route::resource('tributacao', TributacaoController::class);
 
     Route::resource('processo', ProcessoController::class);
-    Route::post('processo/filtrar', [ProcessoController::class, 'processosFiltrar'])->name('processosFiltrar');
     Route::resource('processoMov', ProcessomovController::class);
 
     Route::resource('usuarios', UserController::class);

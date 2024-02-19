@@ -61,6 +61,9 @@ class ProcessoController extends Controller
                  break;
          }
 
+        // Ordena os processos por data de forma crescente
+        $query->orderBy('data', 'asc');
+
          $processos = $query->get()->map(function ($processo) {
              // Cálculo dos dias passados para cada processo, como no método index
              $dataProcesso = new Carbon($processo->data);
@@ -71,44 +74,6 @@ class ProcessoController extends Controller
 
          return view('Admin.Processos.processo-listar', compact('processos', 'filtro', 'pesquisa'));
      }
-
-
-    // public function index(Request $request)
-    // {
-    //     // Chama o método para atualizar o status dos processos
-    //     $this->updateConcluido();
-
-    //     $processos = Processo::when($request->has('pesquisa'), function ($query) use ($request) {
-    //         $query->where(function ($query) use ($request) {
-    //             $query->where('titulo', 'like', '%' . $request->pesquisa . '%')
-    //                 ->orWhere('status', 'like', '%' . $request->pesquisa . '%')
-    //                 ->orWhereHas('cliente', function ($q) use ($request) {
-    //                     $q->where('nome', 'like', '%' . $request->pesquisa . '%');
-    //                 });
-    //         });
-    //     })
-    //     ->whereNull('concluido')
-    //     ->orderBy('data', 'desc')
-    //     ->get()
-    //     ->map(function ($processo) {
-    //         // Aqui você calcula a diferença em dias entre a data do processo e hoje
-    //         $dataProcesso = new Carbon($processo->data);
-    //         $hoje = Carbon::now();
-    //         $diasPassados = $dataProcesso->diffInDays($hoje);
-
-    //         // Adiciona o número de dias passados como um novo atributo do processo
-    //         $processo->diasPassados = $diasPassados;
-
-    //         return $processo;
-    //     });
-
-    //     $filtro = 'ativos';
-    //     return view('Admin.Processos.processo-listar', [
-    //         'processos' => $processos,
-    //         'filtro' => $filtro,
-    //         'pesquisa' => $request->pesquisa
-    //     ]);
-    // }
 
     /**
      * Show the form for creating a new resource.
@@ -273,38 +238,5 @@ class ProcessoController extends Controller
 
         return redirect()->route('processo.index');
     }
-
-    // public function processosFiltrar(Request $request)
-    // {
-
-    //     // Data de 10 dias atrás
-    //     $dezDiasAtras = Carbon::now()->subDays(11);
-
-    //     $processosParados = Processo::whereDoesntHave('movimentacoes', function ($query) use ($dezDiasAtras) {
-    //         $query->where('data', '>', $dezDiasAtras);
-    //         })
-    //         ->where('status', '!=', 'Concluido') // Exclui processos com status 'Concluido'
-    //         ->get();
-
-    //     $filtro = $request->r1;
-
-    //     if ($filtro == 'ativos') {
-    //         // Processos ativos: 'data_saida' é null
-    //         $processos = Processo::whereNull('concluido')->get();
-    //     } elseif ($filtro == 'inativos') {
-    //         // Processos inativos: 'data_saida' não é null
-    //         $processos = Processo::whereNotNull('concluido')->get();
-    //     } elseif ($filtro == 'parados') {
-    //         // Processos parados
-    //         $processos = $processosParados;
-    //     } else {
-    //         // Todos os processos
-    //         $processos = Processo::all();
-    //     }
-
-    //     $pesquisa = "";
-
-    //     return view('Admin.Processos.processo-listar', compact(['processos', 'filtro', 'pesquisa']));
-    // }
 
 }
