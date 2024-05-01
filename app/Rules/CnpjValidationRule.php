@@ -8,32 +8,28 @@ class CnpjValidationRule implements Rule
 {
     public function passes($attribute, $cnpj)
     {
-
-        // Remova caracteres não numéricos
+        // Remove caracteres não numéricos
         $cnpj = preg_replace('/\D/', '', $cnpj);
 
-
-        // Verifique se a string tem 14 dígitos
+        // Verifica se a string possui exatamente 14 caracteres
         if (strlen($cnpj) != 14) {
             return false;
         }
 
-        // Verifique se todos os dígitos são iguais (isso não é um CNPJ válido)
+        // Verifica a existência de uma sequência de dígitos idênticos (CNPJ inválido)
         if (preg_match('/(\d)\1{13}/', $cnpj)) {
             return false;
         }
 
-        //Pega o CNPJ sem o dígito verificador
-        $cnpjValidacao = substr($cnpj, 0, 12);
+        // Obtém a base do CNPJ sem os dígitos verificadores
+        $baseCnpj = substr($cnpj, 0, 12);
 
-        //Concatena com o dígito verificador calculado
-        $cnpjValidacao .= self::calcularDigitoVerificador($cnpjValidacao);
+        // Acrescenta os dígitos verificadores calculados
+        $digitosVerificadoresCalculados = self::calcularDigitoVerificador($baseCnpj, 1);
+        $digitosVerificadoresCalculados .= self::calcularDigitoVerificador($baseCnpj . $digitosVerificadoresCalculados, 2);
 
-        $cnpjValidacao .= self::calcularDigitoVerificador($cnpjValidacao);
-
-        //Compara o CNPJ enviado com o CNPJ calculado
-        return $cnpjValidacao == $cnpj;
-
+        // Compara o CNPJ fornecido com o CNPJ calculado
+        return $baseCnpj . $digitosVerificadoresCalculados == $cnpj;
     }
 
     public function message()
@@ -41,18 +37,20 @@ class CnpjValidationRule implements Rule
         return 'O CNPJ informado não é válido.';
     }
 
-    public static function calcularDigitoVerificador($base) {
+    private static function calcularDigitoVerificador($base, $posicao)
+    {
         $tamanho = strlen($base);
-        $multiplicador = 9;
-        $soma = 0; //variável que recebe a soma das multiplicações
-
-        //Intera todos os números da base da direita para a esquerda
-        for($i = ($tamanho - 1); $i >= 0; $i--) {
-            $soma += $base[$i] * $multiplicador; // Soma atual
-            $multiplicador--; // Decrementa o multiplicador
-            $multiplicador = $multiplicador < 2 ? 9 : $multiplicador; // Limita o decremento até 2
+        $multiplicadores = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+        if ($posicao === 2) {
+            array_unshift($multiplicadores, 6);
         }
-        //Calcula o digito verificador (resto por 11)
-        return $soma % 11;
+
+        $soma = 0;
+        for ($i = 0; $i < $tamanho; $i++) {
+            $soma += $base[$i] * $multiplicadores[$i];
+        }
+
+        $resultado = 11 - $soma % 11;
+        return $resultado > 9 ? 0 : $resultado;
     }
 }

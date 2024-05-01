@@ -25,11 +25,15 @@
                 <label class="col-form-label col-form-label-sm" for="titulo">Número:</label>
                 @if(preg_match('/^(PIP|PIB|PIE|PIN)\d{10}$/', $processo->numero))
                     <a href="https://www.piauidigital.pi.gov.br/sigfacil/processo/acompanhar/co_protocolo/{{ $processo->numero }}" target="_blank" class="form-control form-control-sm" style="color: blue;" readonly>
-        {{ $processo->numero }}
-    </a>
-@else
-    <input type="text" name="numero" id="numero" class="form-control form-control-sm" value="{{ $processo->numero }}" readonly>
-@endif
+                        {{ $processo->numero }}
+                    </a>
+                @elseif(preg_match('/^\d+\/\d{4}$/', $processo->numero))
+                    <a href="http://slic.semf.teresina.pi.gov.br/AlvaraNovo-war/externo/homeExternoLogado.jsf" target="_blank"  class="form-control form-control-sm" style="color: blue;" readonly>
+                        {{ $processo->numero }}
+                    </a>
+                @else
+                    <input type="text" name="numero" id="numero" class="form-control form-control-sm" value="{{ $processo->numero }}" readonly>
+                @endif
 
             </div>
             <div class="col-md-2">

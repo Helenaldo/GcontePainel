@@ -122,6 +122,10 @@
                             <a href="https://www.piauidigital.pi.gov.br/sigfacil/processo/acompanhar/co_protocolo/{{ $processo->numero }}"  target="_blank">
                                 {{ $processo->numero }}
                             </a>
+                        @elseif(preg_match('/^\d+\/\d{4}$/', $processo->numero))
+                            <a href="http://slic.semf.teresina.pi.gov.br/AlvaraNovo-war/externo/homeExternoLogado.jsf" target="_blank">
+                                {{ $processo->numero }}
+                            </a>
                         @else
                             {{ $processo->numero }}
                         @endif
