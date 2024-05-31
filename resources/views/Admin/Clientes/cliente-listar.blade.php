@@ -129,6 +129,7 @@
 @section('js')
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
     @foreach(['success', 'error', 'info', 'warning'] as $type)
     @if(session($type))
     @include("Components.toast-$type")

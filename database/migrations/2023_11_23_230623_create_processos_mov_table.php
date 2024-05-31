@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(Processo::class);
             $table->date('data');
-            $table->string('descricao');
+            $table->string('descricao'); //
             $table->timestamps();
         });
     }
